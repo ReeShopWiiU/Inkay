@@ -50,7 +50,7 @@ INITIALIZE_PLUGIN() {
     }
 
     // if using pretendo then (try to) apply the ssl patches
-    Inkay_Initialize(Config::connect_to_network);
+    Inkay_Initialize(Config::connect_to_network, Config::connect_to_reeshop);
 }
 
 DEINITIALIZE_PLUGIN() {

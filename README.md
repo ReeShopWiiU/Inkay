@@ -2,6 +2,39 @@
 
 [![Pretendo network logo](https://github.com/PretendoNetwork/website/raw/master/public/assets/images/opengraph/opengraph-image.png)](https://pretendo.network)
 
+> [!important]
+> I feel like I need to put this here, so here it is.
+> The code that have been added makes it so that I could make the eShop work with our eShop version (also known as reeShop).
+> The rest of the code is Pretendo Network contributors work. I did not work on this, I only found it and made it work.
+> All credits go to the Pretendo Network contributors who worked hard on this.
+>
+> If you wonder, the only files that got edited are
+> ![src/patches/eshop_applet.cpp](https://github.com/ReeShopWiiU/Inkay/tree/main/src/patches/eshop_applet.cpp), 
+> ![src/patches/eshop_applet.h](https://github.com/ReeShopWiiU/Inkay/tree/main/src/patches/eshop_applet.h),
+> ![src/config.cpp](https://github.com/ReeShopWiiU/Inkay/tree/main/src/config.cpp),
+> ![src/config.h](https://github.com/ReeShopWiiU/Inkay/tree/main/src/config.h),
+> ![src/iosu_url_patches.h](https://github.com/ReeShopWiiU/Inkay/tree/main/src/iosu_url_patches.h),
+> ![src/main.cpp](https://github.com/ReeShopWiiU/Inkay/tree/main/src/main.cpp),
+> ![plugin/src/config.cpp](https://github.com/ReeShopWiiU/Inkay/tree/main/plugin/src/config.cpp),
+> ![plugin/src/config.h](https://github.com/ReeShopWiiU/Inkay/tree/main/plugin/src/config.h),
+> ![plugin/src/main.cpp](https://github.com/ReeShopWiiU/Inkay/tree/main/plugin/src/main.cpp),
+> ![plugin/src/module.h](https://github.com/ReeShopWiiU/Inkay/tree/main/plugin/src/module.h),
+> ![plugin/src/module.cpp](https://github.com/ReeShopWiiU/Inkay/tree/main/plugin/src/module.cpp)
+> and the originals being here
+> ![src/patches/eshop_applet.cpp](https://github.com/PretendoNetwork/Inkay/blob/main/src/patches/eshop_applet.cpp),
+> ![src/patches/eshop_applet.h](https://github.com/PretendoNetwork/Inkay/blob/main/src/patches/eshop_applet.h),
+> ![src/config.cpp](https://github.com/PretendoNetwork/Inkay/blob/main/src/config.cpp),
+> ![src/config.h](https://github.com/PretendoNetwork/Inkay/blob/main/src/config.h),
+> ![src/iosu_url_patches.h](https://github.com/PretendoNetwork/Inkay/blob/main/src/iosu_url_patches.h),
+> ![src/main.cpp](https://github.com/PretendoNetwork/Inkay/blob/main/src/main.cpp),
+> ![plugin/src/config.cpp](https://github.com/PretendoNetwork/Inkay/blob/main/plugin/src/config.cpp),
+> ![plugin/src/config.h](https://github.com/PretendoNetwork/Inkay/blob/main/plugin/src/config.h),
+> ![plugin/src/main.cpp](https://github.com/PretendoNetwork/Inkay/blob/main/plugin/src/main.cpp),
+> ![plugin/src/module.h](https://github.com/PretendoNetwork/Inkay/blob/main/plugin/src/module.h),
+> ![plugin/src/module.cpp](https://github.com/PretendoNetwork/Inkay/blob/main/plugin/src/module.cpp)
+>
+> Thom
+
 Inkay is an Aroma/WUPS plugin that patches various Nintendo Network URLs on a Wii U to use Pretendo Network instead. It also (for the time being) bypasses SSL verification in most cases. It redirects Nintendo Network in:
 
 - IOSU-side connections (Friends, SpotPass, accounts etc.)

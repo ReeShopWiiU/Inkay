@@ -10,6 +10,13 @@ public:
 
     static bool connect_to_network;
 
+    /* 
+     * this allows us to either let pretendo urls, 
+     * or just let our urls take over, 
+     * its easier since well id rather let pretendo work as normal
+     */
+    static bool connect_to_reeshop;
+
     static bool initialized;
 
     static bool shown_warning;

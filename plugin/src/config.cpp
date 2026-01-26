@@ -39,6 +39,7 @@
 static config_strings strings;
 
 bool Config::connect_to_network = true;
+bool Config::connect_to_reeshop = false;
 bool Config::need_relaunch = false;
 bool Config::unregister_task_item_pressed = false;
 bool Config::is_wiiu_menu = false;
@@ -61,6 +62,18 @@ static void connect_to_network_changed(ConfigItemBoolean* item, bool new_value) 
 
     WUPSStorageError res;
     res = WUPSStorageAPI::Store<bool>("connect_to_network", Config::connect_to_network);
+    if (res != WUPS_STORAGE_ERROR_SUCCESS) return report_storage_error(res);
+}
+
+static void connect_to_reeshop_changed(ConfigItemBoolean* item, bool new_value) {
+    DEBUG_FUNCTION_LINE_VERBOSE("connect_to_reeshop changed to: %d", new_value);
+    if (new_value != Config::connect_to_reeshop) {
+        Config::need_relaunch = true;
+    }
+    Config::connect_to_reeshop = new_value;
+
+    WUPSStorageError res;
+    res = WUPSStorageAPI::Store<bool>("connect_to_reeshop", Config::connect_to_reeshop);
     if (res != WUPS_STORAGE_ERROR_SUCCESS) return report_storage_error(res);
 }
 
@@ -136,7 +149,13 @@ static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHa
     auto connect_item = WUPSConfigItemBoolean::Create("connect_to_network", strings.connect_to_network_setting, true, Config::connect_to_network, &connect_to_network_changed, err);
     if (!connect_item) return report_error(err);
 
+    auto connect_item_ree = WUPSConfigItemBoolean::Create("connect_to_reeshop", "Connect to reeshop", false, Config::connect_to_reeshop, &connect_to_reeshop_changed, err);
+    if (!connect_item_ree) return report_error(err);
+
     res = network_cat->add(std::move(*connect_item), err);
+    if (!res) return report_error(err);
+
+    res = network_cat->add(std::move(*connect_item_ree), err);
     if (!res) return report_error(err);
 
     {
@@ -224,6 +243,23 @@ void Config::Init() {
     
         // Add the value to the storage if it's missing.
         res = WUPSStorageAPI::Store<bool>("connect_to_network", connect_to_network);
+        if (res != WUPS_STORAGE_ERROR_SUCCESS) return report_storage_error(res);
+    }
+    else if (res != WUPS_STORAGE_ERROR_SUCCESS) return report_storage_error(res);
+
+    res = WUPSStorageAPI::Get<bool>("connect_to_reeshop", Config::connect_to_reeshop);
+    if (res == WUPS_STORAGE_ERROR_NOT_FOUND) {
+        DEBUG_FUNCTION_LINE("Connect to reeshop value not found, attempting to migrate/create");
+
+        bool skipPatches = false;
+        if (WUPSStorageAPI::Get<bool>("skipPatches", skipPatches) == WUPS_STORAGE_ERROR_SUCCESS) {
+            // Migrate old config value
+            Config::connect_to_reeshop = !skipPatches;
+            WUPSStorageAPI::DeleteItem("skipPatches");
+        }
+    
+        // Add the value to the storage if it's missing.
+        res = WUPSStorageAPI::Store<bool>("connect_to_reeshop", connect_to_reeshop);
         if (res != WUPS_STORAGE_ERROR_SUCCESS) return report_storage_error(res);
     }
     else if (res != WUPS_STORAGE_ERROR_SUCCESS) return report_storage_error(res);

@@ -122,7 +122,7 @@ static InkayStatus Inkay_GetStatus() {
     }
 }
 
-static void Inkay_Initialize(bool apply_patches) {
+static void Inkay_Initialize(bool apply_patches, bool apply_eshop_patches) {
     if (Config::initialized)
         return;
 
@@ -130,7 +130,7 @@ static void Inkay_Initialize(bool apply_patches) {
         ShowNotification("Cannot load Inkay while the system is running. Please restart the console");
         return;
     }
-
+    Config::connect_to_reeshop = apply_eshop_patches;
     // if using pretendo then (try to) apply the ssl patches
     if (apply_patches) {
         Config::connect_to_network = true;
@@ -141,21 +141,33 @@ static void Inkay_Initialize(bool apply_patches) {
             Mocha_IOSUKernelWrite32(0xE1019E84, 0xE3A00001); // mov r0, #1
         }
 
-        for (const auto &patch: url_patches) {
-            write_string(patch.address, patch.url);
+        if (!Config::connect_to_reeshop) {
+            for (const auto &patch: url_patches) {
+                write_string(patch.address, patch.url);
+            }
+        } else {
+            for (const auto &patch: url_patches_reeshop) {
+                write_string(patch.address, patch.url);
+            }
         }
-
         // IOS-NIM-BOSS GlobalPolicyList->state: poking this forces a refresh after we changed the url
         Mocha_IOSUKernelWrite32(0xE24B3D90, 4);
 
         DEBUG_FUNCTION_LINE_VERBOSE("Pretendo URL and NoSSL patches applied successfully.");
 
         ShowNotification(get_pretendo_message());
+        if (Config::connect_to_reeshop){
+            ShowNotification("eShop Selected: reeShop");
+        } else {
+            ShowNotification("eShop Selected: Original (Pretendo)");
+        }
+
         Config::initialized = true;
     } else {
         DEBUG_FUNCTION_LINE_VERBOSE("Pretendo URL and NoSSL patches skipped.");
 
         ShowNotification(get_nintendo_network_message());
+        ShowNotification("eShop Selected: Original (Nintendo)");
         Config::initialized = true;
         return;
     }

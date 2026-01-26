@@ -14,7 +14,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+
+  I feel like i need to put this here.
+
+  This code has been added so that it could make the eshop work with our eshop version (also known as ReeShop).
+  The rest of the code is Pretendo Network Contributors Work. I did not work on this, i only found it and made it work
+  All Credits go to the Pretendo Network Contributors who worked hard on this.
+
+  - Thom
+
+*/
+
 #pragma once
+
+#ifndef BASEURL_REESHOP
+// depricated, since well it didnt work like i intended it.
+#define BASEURL_REESHOP "reeshop.net"
+
+#endif
 
 void patchEshop();
 void unpatchEshop();

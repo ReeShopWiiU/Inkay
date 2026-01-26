@@ -16,6 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+
+  I feel like i need to put this here so here it is.
+
+  This code has been added so that it could make the eshop work with our eshop version (also known as ReeShop).
+  The rest of the code is Pretendo Network Contributors Work. I did not work on this, i only found it and made it work
+  All Credits go to the Pretendo Network Contributors who worked hard on this.
+
+  - Thom
+
+*/
+
 #include "config.h"
 #include "olv_urls.h"
 #include "utils/logger.h"
@@ -32,7 +44,8 @@
 #include "ca_pem.h" // generated at buildtime
 
 constexpr char wave_original[] = "https://ninja.wup.shop.nintendo.net/ninja/wood_index.html?";
-constexpr char wave_new[] =      "http://samurai.wup.shop." NETWORK_BASEURL "/ninja/wood_index.html?";
+constexpr char wave_new[] = "http://samurai.wup.shop." NETWORK_BASEURL "/ninja/wood_index.html?";     
+constexpr char wave_new_reeshop[] =  "http://samurai.wup.shop.reeshop.net/ninja/wood_index.html?";    
 
 struct eshop_allowlist {
     char scheme[16];
@@ -55,6 +68,14 @@ constexpr struct eshop_allowlist new_entry = {
     .flags = {1, 1, 1, 1, 0},
 };
 
+constexpr struct eshop_allowlist new_entry_reeshop = {
+    .scheme = "http",
+    .domain = "samurai.wup.shop.reeshop.net",
+    .path = "",
+    .flags = {1, 1, 1, 1, 0},
+};
+
+
 static std::optional<FSFileHandle> rootca_pem_handle{};
 std::vector<PatchedFunctionHandle> eshop_patches;
 
@@ -72,12 +93,19 @@ DECL_FUNCTION(int, FSOpenFile_eShop, FSClient *client, FSCmdBlock *block, char *
         //we do it when loading this file since it should only load once, preventing massive lag spikes as it searches all of MEM2 xD
 
         DEBUG_FUNCTION_LINE_VERBOSE("Inkay: hewwo eShop!\n");
+        if (!Config::connect_to_reeshop){
+            if (!replace(0x10000000, 0x10000000, wave_original, sizeof(wave_original), wave_new, sizeof(wave_new)))
+                DEBUG_FUNCTION_LINE_VERBOSE("Inkay: We didn't find the url /)>~<(\\");
 
-        if (!replace(0x10000000, 0x10000000, wave_original, sizeof(wave_original), wave_new, sizeof(wave_new)))
-            DEBUG_FUNCTION_LINE_VERBOSE("Inkay: We didn't find the url /)>~<(\\");
+            if (!replace(0x10000000, 0x10000000, (const char *)&original_entry, sizeof(original_entry), (const char *)&new_entry, sizeof(new_entry)))
+                DEBUG_FUNCTION_LINE_VERBOSE("Inkay: We didn't find the whitelist /)>~<(\\");
+        } else {
+            if (!replace(0x10000000, 0x10000000, wave_original, sizeof(wave_original), wave_new_reeshop, sizeof(wave_new_reeshop)))
+                DEBUG_FUNCTION_LINE_VERBOSE("Inkay: We didn't find the url /)>~<(\\");
 
-        if (!replace(0x10000000, 0x10000000, (const char *)&original_entry, sizeof(original_entry), (const char *)&new_entry, sizeof(new_entry)))
-            DEBUG_FUNCTION_LINE_VERBOSE("Inkay: We didn't find the whitelist /)>~<(\\");
+            if (!replace(0x10000000, 0x10000000, (const char *)&original_entry, sizeof(original_entry), (const char *)&new_entry_reeshop, sizeof(new_entry_reeshop)))
+                DEBUG_FUNCTION_LINE_VERBOSE("Inkay: We didn't find the whitelist /)>~<(\\");
+        }
 
     // Check for root CA file and take note of its handle
     } else if (strcmp("vol/content/browser/rootca.pem", path) == 0) {
