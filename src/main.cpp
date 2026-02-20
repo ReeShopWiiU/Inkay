@@ -107,24 +107,6 @@ static const char *get_pretendo_message() {
     return get_config_strings(get_system_language()).using_pretendo_network.data();
 }
 
-bool getser(char* serout, size_t buffer) {
-    if (!serout || buffer < 25) {
-        return false;
-    }
-
-    uint8_t seeprom[0x200];
-    if (Mocha_SEEPROMRead(seeprom, 0, sizeof(seeprom)) != sizeof(seeprom)) {
-        return false;
-    }
-
-    char* code_id = (char*)(seeprom + 0xAC);
-    char* ser_id = (char*)(seeprom + 0xB4);
-
-    snprintf(serout, buffer, "%s%s", code_id, ser_id);
-
-    return true;
-}
-
 static void Inkay_SetPluginRunning() {
     Config::plugin_is_loaded = true;
 }
@@ -176,13 +158,6 @@ static void Inkay_Initialize(bool apply_patches, bool apply_eshop_patches) {
         ShowNotification(get_pretendo_message());
         if (Config::connect_to_reeshop){
             ShowNotification("eShop Selected: reeShop");
-            char serial[25] = {0};
-            if (getser(serial, sizeof(serial))){
-                #include <nn/fp/fp_cpp.h>
-                char msg[255];
-                snprintf(msg, sizeof(msg), "Serial is %s, your id is %s", serial, GetMyPrincipalId());
-                ShowNotification(msg);
-            }
         } else {
             ShowNotification("eShop Selected: Original (Pretendo)");
         }
